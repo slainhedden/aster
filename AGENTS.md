@@ -2,18 +2,22 @@
 
 ## Cursor Cloud specific instructions
 
-This repository ("aster") is currently a greenfield project with no application code. The only file is `README.md` describing the product concept: "Codex with an easy skill adder in Slack for companies."
+### Project overview
 
-### Current state
+Aster is a Slack bot (TypeScript/Node.js) that provides AI-powered answers augmented by custom "skills" per workspace. Built with Slack Bolt SDK (Socket Mode), OpenAI API, and SQLite (better-sqlite3).
 
-- **No application code, frameworks, or dependencies** are present.
-- There is nothing to build, lint, test, or run at this time.
-- No package manager lockfiles, Dockerfiles, or CI configuration exist.
+### Dev commands
 
-### When code is added
+All standard commands are in `package.json` scripts. Key ones:
 
-Once application code is introduced, this section should be updated with:
-- How to install dependencies (e.g., `npm install`, `pip install -r requirements.txt`)
-- How to run the dev server
-- How to run lint and tests
-- Any required environment variables or secrets (e.g., Slack API tokens, OpenAI keys)
+- `npm run dev` — start with hot-reload (requires valid Slack + OpenAI credentials in `.env`)
+- `npm test` — run all 79 tests (Vitest)
+- `npm run lint` — ESLint
+- `npm run build` — TypeScript compile to `dist/`
+
+### Non-obvious caveats
+
+- **Dev server requires real credentials**: `npm run dev` connects to Slack via Socket Mode; it will fail with `invalid_auth` if tokens are dummy values. Tests use mocked OpenAI so they run without credentials.
+- **SQLite auto-creates**: The database and `data/` directory are created automatically on first run. No migration step needed.
+- **Test isolation**: Each test file creates/destroys its own SQLite database in `tests/.test-data/`. These are gitignored.
+- **OpenAI mock pattern**: Tests mock the `openai` module with a class-based mock (not function-based). See `tests/services/ai.test.ts` for the pattern.
